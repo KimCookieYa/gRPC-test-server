@@ -6,7 +6,10 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts",
+    "docker:build": "docker build -t grpc-test-server .",
+    "docker:run": "docker run -p 50051:50051 grpc-test-server",
+    "docker:clean": "docker rmi grpc-test-server"
   },
   "keywords": [],
   "author": "",

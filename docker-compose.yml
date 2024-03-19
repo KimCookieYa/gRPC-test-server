@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  envoy:
+    image: envoyproxy/envoy:v1.18.3  # 사용하고자 하는 Envoy 이미지 버전
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml  # 로컬의 envoy.yaml 파일을 컨테이너 내부로 마운트
+    networks:
+      - grpc-test-net
+    ports:
+      - "8080:8080"  # Envoy 프록시 서버의 포트
+      - "9901:9901"  # Envoy의 Admin API 포트
+      - "10000:10000"  # Envoy의 gRPC-Web 포트
+    command: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml --service-cluster proxy
+    depends_on:
+      - grpc_server  # gRPC 서버 서비스가 먼저 시작되도록 설정
+
+  grpc_server:
+    image: grpc-node:latest  # gRPC 서버 Docker 이미지ㅇ
+    networks:
+      - grpc-test-net
+    expose:
+      - "3003"  # gRPC 서버의 포트
+    ports:
+      - "3003:3003"  # gRPC 서버의 포트
+
+networks:
+  grpc-test-net:
+    driver: bridge
